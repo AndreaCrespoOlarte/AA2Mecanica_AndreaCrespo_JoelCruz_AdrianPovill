@@ -1,12 +1,13 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class angularRotation : MonoBehaviour
+public class BallController : MonoBehaviour
 {
 
     [Header("Object properties")]
     //Object
     [SerializeField] private GameObject ball;
-    [SerializeField] private float radius = 0.5f;
+    [SerializeField] public float radius = 0.5f;
 
     [Header("Movement Properties")]
     //Dynamic properties
@@ -28,11 +29,18 @@ public class angularRotation : MonoBehaviour
     public float stepTime = 0.1f;
     public float time;
 
+    [Header("Collisions")]
+    [SerializeField] private CollisionController collisionController;
+    [SerializeField] private bool colliding;
+
+    [Header("Gravity")]
+    [SerializeField] float gravityAcceleration = 5;
+    [SerializeField] float gravityVelocity = 0;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         ball.transform.localScale = new Vector3(2 * radius, 2 * radius, 2 * radius);
-        position = Vector3.zero; 
         ball.transform.position = position;
         angularVelocity = initialAngularVelocity;
         angle = initialAngle;
@@ -41,10 +49,23 @@ public class angularRotation : MonoBehaviour
 
     void FixedUpdate()
     {
+        gravityVelocity += gravityAcceleration * Time.fixedDeltaTime;
+
         (angle, angularVelocity, linearVelocity, position) = motionEquations(angle, angularVelocity, linearVelocity, position);
+        position = new Vector3(position.x, position.y - gravityVelocity , position.z);
 
         ball.transform.rotation = Quaternion.Euler(0, Mathf.Rad2Deg * angle, 0);
         ball.transform.position = position;
+
+        float CollisionY;
+
+        (colliding, CollisionY) = collisionController.CollidingWithGround();
+
+        if (colliding)
+        {
+            position = new Vector3(position.x, CollisionY + radius + 0.01f, position.z);
+            gravityVelocity = 0;
+        }
     }
 
     (float, float, float, Vector3) motionEquations(float oldAngle, float oldAngularVelocity, float oldLinearVelocity, Vector3 oldPosition)

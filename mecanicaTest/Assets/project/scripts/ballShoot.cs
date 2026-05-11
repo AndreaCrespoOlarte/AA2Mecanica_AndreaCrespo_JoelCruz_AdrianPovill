@@ -4,7 +4,7 @@ using UnityEngine;
 public class ballShoot : MonoBehaviour
 {
 
-    [SerializeField] private angularRotation movement;
+    [SerializeField] private BallController movement;
     [SerializeField] private Camera cam;
 
     [SerializeField] private Vector2 screenPosition;
