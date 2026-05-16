@@ -1,107 +1,51 @@
-using Unity.VisualScripting;
+using TMPro;
 using UnityEngine;
 
 public class BallController : MonoBehaviour
 {
 
-    [Header("Object properties")]
-    //Object
-    [SerializeField] private GameObject ball;
-    [SerializeField] public float radius = 0.5f;
+    [SerializeField] private PhysicsManager physicsManager;
+    [SerializeField] private Camera cam;
 
-    [Header("Movement Properties")]
-    //Dynamic properties
-    [SerializeField] private Vector3 position;
-    [SerializeField] private float linearVelocity;
-    [SerializeField] private float angularVelocity;
-    [SerializeField] private float angle;
-    [SerializeField] private Vector3 dir;
-    [SerializeField] private float frictionCoefficient;
+    [SerializeField] private Vector2 screenPosition;
 
-    [Header("Starting Conditions")]
-
-    //Initial conditions
-    public float initialAngularVelocity = -4.6f;
-    public float angularAcceleration= 0.015f;
-    public float initialAngle = -4.6f;
-
-    //Time properties
-    public float stepTime = 0.1f;
-    public float time;
-
-    [Header("Collisions")]
-    [SerializeField] private CollisionController collisionController;
-    [SerializeField] private bool colliding;
-
-    [Header("Gravity")]
-    [SerializeField] float gravityAcceleration = 5;
-    [SerializeField] float gravityVelocity = 0;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [Header("Shoot parameters")]
+    [SerializeField] private float maxForce;
+    [SerializeField] private Vector2 startMousePos;
+    [SerializeField] private Vector2 endMousePos;
+    
+    void Update()
     {
-        ball.transform.localScale = new Vector3(2 * radius, 2 * radius, 2 * radius);
-        ball.transform.position = position;
-        angularVelocity = initialAngularVelocity;
-        angle = initialAngle;
-        time = 0;
-    }
 
-    void FixedUpdate()
-    {
-        gravityVelocity += gravityAcceleration * Time.fixedDeltaTime;
+        screenPosition = Input.mousePosition;
 
-        (angle, angularVelocity, linearVelocity, position) = motionEquations(angle, angularVelocity, linearVelocity, position);
-        position = new Vector3(position.x, position.y - gravityVelocity , position.z);
-
-        ball.transform.rotation = Quaternion.Euler(0, Mathf.Rad2Deg * angle, 0);
-        ball.transform.position = position;
-
-        float CollisionY;
-
-        (colliding, CollisionY) = collisionController.CollidingWithGround();
-
-        if (colliding)
+        if (Input.GetMouseButtonDown(0))
         {
-            position = new Vector3(position.x, CollisionY + radius + 0.01f, position.z);
-            gravityVelocity = 0;
+            startMousePos = screenPosition;
         }
-    }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            endMousePos = screenPosition;
 
-    (float, float, float, Vector3) motionEquations(float oldAngle, float oldAngularVelocity, float oldLinearVelocity, Vector3 oldPosition)
-    {
-        float newAngle, newAngularVelocity, newLinearVelocity;
-        Vector3 newPosition;
+            Vector3 dragDelta = startMousePos - endMousePos;
 
+            Vector3 camForward = cam.transform.forward;
+            Vector3 camRight = cam.transform.right;
 
-        float frictionDecel = 0;
+            //y = 0 para qu e no salga volando
+            camForward.y = 0f;
+            camRight.y = 0f;
+            camForward.Normalize();
+            camRight.Normalize();
 
-        if (Mathf.Abs(oldAngularVelocity) != 0)
-            frictionDecel = (2.5f * frictionCoefficient * 9.81f) / radius;
+            Vector3 temp = (camForward * dragDelta.y) + (camRight * dragDelta.x);
+            Vector3 shootDirection = temp.normalized;
+            float shootVelocity = Mathf.Min(temp.magnitude / 5, maxForce);
 
-        float netAngularAcceleration = angularAcceleration - Mathf.Sign(angularVelocity) * frictionDecel;
+            Debug.Log("dir: " + shootDirection + " mag: " + shootVelocity + " vector: " + temp);
 
-        newAngle = oldAngle + oldAngularVelocity * stepTime + 0.5f * netAngularAcceleration * stepTime * stepTime;
-        newAngularVelocity = oldAngularVelocity + netAngularAcceleration * stepTime;
+            physicsManager.ApplyImpulse(shootDirection * shootVelocity);
+        }
 
-        if (Mathf.Abs(newAngularVelocity) < 0.6f)
-            newAngularVelocity = 0;
-
-        newLinearVelocity = newAngularVelocity * radius * stepTime;
-        newPosition = oldPosition + dir * newLinearVelocity * stepTime;
-
-        time += stepTime;
-
-        return (newAngle, newAngularVelocity, newLinearVelocity, newPosition);
-    }
-
-    public void SetDirection(Vector3 newDir)
-    {
-        dir = newDir;
-    }
-
-    public void SetAngularVelicty(float newAngularVelocity)
-    {
-        angularVelocity = newAngularVelocity;
     }
 }
