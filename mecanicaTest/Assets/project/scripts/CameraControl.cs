@@ -22,8 +22,10 @@ public class CameraControl : MonoBehaviour
         if (Input.GetMouseButton(1))
         {
             float mouseX = Input.GetAxis("Mouse X") * rotationSpeed;
+            float mouseY = Input.GetAxis("Mouse Y") * rotationSpeed;
 
-            offset = Quaternion.AngleAxis(mouseX, Vector3.up) * offset;
+            offset = Quaternion.AngleAxis(mouseX, Vector3.up) * offset; 
+            offset = Quaternion.AngleAxis(mouseY, Vector3.right) * offset;
         }
 
 

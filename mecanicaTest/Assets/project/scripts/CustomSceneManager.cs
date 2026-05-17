@@ -11,7 +11,10 @@ public class CustomSceneManager : MonoBehaviour
     {
         SceneManager.LoadScene(index);
     }
-
+    public void ResetScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
     public void Exit()
     {
         Application.Quit();

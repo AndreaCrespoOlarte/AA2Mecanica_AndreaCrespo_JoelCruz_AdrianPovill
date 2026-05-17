@@ -17,7 +17,10 @@ public class PhysicsManager : MonoBehaviour
     [SerializeField] private Vector3 velocity = Vector3.zero;
     [SerializeField] private bool isGrounded = false;
     [SerializeField] private float currentFriction;
+    [SerializeField] private float DeathHeight;
     [SerializeField] private Vector3 currentGroundNormal;
+
+    private Vector3 lastShotPosition;
 
     public List<Transform> groundRectangles;
     public List<Transform> obstacles;
@@ -25,6 +28,7 @@ public class PhysicsManager : MonoBehaviour
 
     private void Start()
     {
+        lastShotPosition = transform.position;
         ball.transform.localScale = 2 * radius * Vector3.one;
     }
 
@@ -36,6 +40,8 @@ public class PhysicsManager : MonoBehaviour
         Vector3 forces = Vector3.zero;
         Vector3 gravityForce = Vector3.down * (mass * gravity);
         float currentEffectiveMass = mass;
+
+        if (ball.transform.position.y <= DeathHeight) ResetBall();
 
         if (isGrounded)
         {
@@ -87,6 +93,22 @@ public class PhysicsManager : MonoBehaviour
         }
 
         ball.position += velocity * Time.fixedDeltaTime;
+    }
+
+    public float GetBallVelocity()
+    {
+        return velocity.magnitude;
+    }
+
+    public void SetShotPosition()
+    {
+        lastShotPosition = ball.transform.position;
+    }
+
+    private void ResetBall()
+    {
+        velocity = Vector3.zero;
+        ball.position = lastShotPosition;
     }
 
     private void RotateBall()
@@ -172,7 +194,7 @@ public class PhysicsManager : MonoBehaviour
         //check de si stamos en el espacio x z que ocupa el suelo
         bool isWithinX = Mathf.Abs(distX) <= halfExtents.x;
         bool isWithinZ = Mathf.Abs(distZ) <= halfExtents.z;
-        bool isAboveCenter = distY > 0; //mirar que noe stemos por debajo
+        bool isAboveCenter = distY > 0; //mirar que no estemos por debajo
 
         //calculamos el punto mas cercano para calcular el pushback
         float closestX = Mathf.Clamp(distX, -halfExtents.x, halfExtents.x);

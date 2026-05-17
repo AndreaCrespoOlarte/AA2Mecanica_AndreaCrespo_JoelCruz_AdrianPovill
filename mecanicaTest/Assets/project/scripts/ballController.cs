@@ -7,18 +7,28 @@ public class BallController : MonoBehaviour
     [SerializeField] private PhysicsManager physicsManager;
     [SerializeField] private Camera cam;
 
+    [SerializeField] private bool freeShot;
+
     [SerializeField] private Vector2 screenPosition;
 
     [Header("Shoot parameters")]
     [SerializeField] private float maxForce;
     [SerializeField] private Vector2 startMousePos;
     [SerializeField] private Vector2 endMousePos;
-    
+    [SerializeField] private TextMeshProUGUI shotsText;
+    private int shots;
+
+    private void Start()
+    {
+        shots = 0;
+        shotsText.text = "Shots: " + shots;
+    }
+
     void Update()
     {
+        if (!freeShot && physicsManager.GetBallVelocity() > 0.5f) return;
 
         screenPosition = Input.mousePosition;
-
         if (Input.GetMouseButtonDown(0))
         {
             startMousePos = screenPosition;
@@ -26,6 +36,8 @@ public class BallController : MonoBehaviour
         else if (Input.GetMouseButtonUp(0))
         {
             endMousePos = screenPosition;
+
+            physicsManager.SetShotPosition();
 
             Vector3 dragDelta = startMousePos - endMousePos;
 
@@ -45,6 +57,8 @@ public class BallController : MonoBehaviour
             Debug.Log("dir: " + shootDirection + " mag: " + shootVelocity + " vector: " + temp);
 
             physicsManager.ApplyImpulse(shootDirection * shootVelocity);
+            shots++;
+            shotsText.text = "Shots: " + shots;
         }
 
     }
