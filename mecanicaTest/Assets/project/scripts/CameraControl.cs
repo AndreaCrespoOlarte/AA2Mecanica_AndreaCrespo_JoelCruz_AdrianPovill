@@ -10,14 +10,12 @@ public class CameraControl : MonoBehaviour
 
     [SerializeField] private float rotationSpeed;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         cam.transform.position = ballTransform.position + offset;
         cam.transform.LookAt(ballTransform.position);
     }
 
-    // Update is called once per frame
     void Update()
     {
 
