@@ -3271,10 +3271,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a4dab0333df7174381175e57583dfe8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movement: {fileID: 374898367}
+  physicsManager: {fileID: 0}
   cam: {fileID: 1427113043}
   screenPosition: {x: 0, y: 0}
-  acceleration: 0
+  maxForce: 0
   startMousePos: {x: 0, y: 0}
   endMousePos: {x: 0, y: 0}
 --- !u!65 &1101201591

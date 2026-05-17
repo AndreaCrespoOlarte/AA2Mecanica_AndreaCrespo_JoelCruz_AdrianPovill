@@ -4,30 +4,30 @@ using UnityEngine.UI;
 public class ArrowFill : MonoBehaviour
 {
     [SerializeField] RectTransform rectTransform;
-    [SerializeField] Image image;
+    [SerializeField] Transform ballTransform;
+    [SerializeField] Image imageFill;
+    [SerializeField] Image imageArrow;
+    [SerializeField] BallController ballController;
 
-    Vector3 arrowDirection; 
-    float fillAmount;
+    float maxForce = 20f;
 
     void Update()
     {
-        if(arrowDirection != null && arrowDirection != Vector3.zero)
+        if (ballController.GetShootDirection() != Vector3.zero && ballController.GetShootVelocity() > 0.01f)
         {
-            image.enabled = true;
-            rectTransform.localEulerAngles = arrowDirection;
-            image.fillAmount = fillAmount;
+            imageFill.enabled = true;
+            imageArrow.enabled = true;
+
+            float angle = Mathf.Atan2(ballController.GetShootDirection().z, ballController.GetShootDirection().x) * Mathf.Rad2Deg;
+
+            rectTransform.rotation = Quaternion.Euler(90f, 0f, angle - 90f);
+
+            imageFill.fillAmount = ballController.GetShootVelocity() / maxForce;
         }
-        
-        image.enabled = false;
-    }
-
-    public void SetArrowDirection(Vector3 newArrowDirection)
-    {
-        arrowDirection = newArrowDirection;
-    }
-
-    public void SetFillAmount(float newFillAmount) //Del 0 al 1
-    {
-        fillAmount = newFillAmount;
+        else
+        {
+            imageFill.enabled = false;
+            imageArrow.enabled = false;
+        }
     }
 }
