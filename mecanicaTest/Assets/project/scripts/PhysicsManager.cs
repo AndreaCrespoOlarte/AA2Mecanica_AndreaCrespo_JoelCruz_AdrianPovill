@@ -152,7 +152,7 @@ public class PhysicsManager : MonoBehaviour
 
                     if (ground.CompareTag("Grass")) currentFriction = 0.4f;
                     else if (ground.CompareTag("Ice")) currentFriction = 0.1f;
-                    else if (ground.CompareTag("Sand")) currentFriction = 0.8f;//hemos subido la friccin de la arena para que se note mas el contraste
+                    else if (ground.CompareTag("Sand")) currentFriction = 0.8f;//hemos subido la fricción de la arena para que se note mas el contraste
                 }
                 else
                 {

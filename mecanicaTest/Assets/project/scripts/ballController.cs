@@ -16,11 +16,18 @@ public class BallController : MonoBehaviour
     [SerializeField] private Vector2 endMousePos;
 
     Vector3 shootDirection;
-    float shootVelocity; 
+    float shootVelocity;
+    private int shots;
+    [SerializeField] private TextMeshProUGUI shotsText;
+
+    private void Start()
+    {
+        shots = 0;
+        shotsText.text = "Shots: " + shots;
+    }
 
     void Update()
     {
-
         screenPosition = Input.mousePosition;
 
         if (Input.GetMouseButtonDown(0))
@@ -47,11 +54,13 @@ public class BallController : MonoBehaviour
         else if (Input.GetMouseButtonUp(0))
         {
             endMousePos = screenPosition;
-
+            physicsManager.SetShotPosition();
             physicsManager.ApplyImpulse(shootDirection * shootVelocity);
 
             shootDirection = Vector3.zero;
             shootVelocity = 0f;
+            shots++;
+            shotsText.text = "Shots: " + shots;
         }
 
     }
