@@ -20,6 +20,8 @@ public class BallController : MonoBehaviour
     private int shots;
     [SerializeField] private TextMeshProUGUI shotsText;
 
+    [SerializeField] private bool freeShot;
+
     private void Start()
     {
         shots = 0;
@@ -28,6 +30,8 @@ public class BallController : MonoBehaviour
 
     void Update()
     {
+        if (!freeShot && physicsManager.GetBallVelocity() > 0.5f) return;
+
         screenPosition = Input.mousePosition;
 
         if (Input.GetMouseButtonDown(0))
