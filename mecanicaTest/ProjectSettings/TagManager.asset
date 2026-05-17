@@ -8,6 +8,8 @@ TagManager:
   - Ice
   - Sand
   - Elastic
+  - Goal
+  - Ball
   layers:
   - Default
   - TransparentFX

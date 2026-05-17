@@ -25,9 +25,11 @@ public class PhysicsManager : MonoBehaviour
     public List<Transform> groundRectangles;
     public List<Transform> obstacles;
 
+    private CustomSceneManager sceneManager;
 
     private void Start()
     {
+        sceneManager = FindAnyObjectByType<CustomSceneManager>();
         lastShotPosition = transform.position;
         ball.transform.localScale = 2 * radius * Vector3.one;
     }
@@ -167,6 +169,7 @@ public class PhysicsManager : MonoBehaviour
             //ignoramos isOnTopFace porque solo queremos rebotar 
             if (CheckSphereBoxCollision(ball.position, radius, obstacle, out Vector3 hitNormal, out float penetration, out _))
             {
+                if (obstacle.CompareTag("Goal") && velocity.magnitude < 0.5f) sceneManager.GoToNextScene();
                 ball.position += hitNormal * penetration;
                 float e = obstacle.CompareTag("Elastic") ? 0.8f : obstacle.CompareTag("Sand") ? 0.2f : 0.5f;
                 velocity = Vector3.Reflect(velocity, hitNormal) * e;
