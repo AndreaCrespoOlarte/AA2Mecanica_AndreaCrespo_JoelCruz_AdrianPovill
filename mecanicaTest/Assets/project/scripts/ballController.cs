@@ -53,7 +53,7 @@ public class BallController : MonoBehaviour
 
             Vector3 temp = (camForward * dragDelta.y) + (camRight * dragDelta.x);
             shootDirection = temp.normalized;
-            shootVelocity = Mathf.Min(temp.magnitude / 20, maxForce);
+            shootVelocity = Mathf.Min(temp.magnitude / 10, maxForce);
         }
         else if (Input.GetMouseButtonUp(0))
         {
